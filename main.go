@@ -30,14 +30,14 @@ func main() {
 	ttsChan := make(chan tts.Request)
 	resultChan := make(chan tts.Response)
 
-	go func() {
-		for i := 0; i < runtime.NumCPU(); i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go func() {
 			for r := range ttsChan {
 				b, err := yandex.TTS(r.Ctx, r.Text, r.Lang)
 				resultChan <- tts.NewResponse(r, b, err)
 			}
-		}
-	}()
+		}()
+	}
 
 	q := queue.NewQueue(
 		queue.NewStore(),
